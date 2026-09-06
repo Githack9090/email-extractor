@@ -1,0 +1,12 @@
+re
+os
+tkinter
+customtkinter
+tkinterdnd
+csv
+openpyxl
+json
+requests
+pypdf
+ordered-set
+zstandard
