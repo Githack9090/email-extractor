@@ -1,5 +1,5 @@
 customtkinter
-tkinterdnd
+tkinterdnd2
 openpyxl
 requests
 pypdf
