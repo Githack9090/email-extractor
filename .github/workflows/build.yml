@@ -22,7 +22,7 @@ jobs:
           Invoke-WebRequest -Uri "https://www.dependencywalker.com/depends22_x64.zip" -OutFile "depends.zip"
           Expand-Archive -Path "depends.zip" -DestinationPath "$env:USERPROFILE\.nuitka\depends"
 
-      - run: python -m nuitka --standalone --onefile --windows-disable-console --enable-plugin=tk-inter --include-package=customtkinter --include-package=pypdf --include-package=openpyxl --include-package=requests --output-filename=EmailExtractor-Windows10-11.exe main.py
+      - run: python -m nuitka --standalone --onefile --windows-disable-console -y --enable-plugin=tk-inter --include-package=customtkinter --include-package=pypdf --include-package=openpyxl --include-package=requests --output-filename=EmailExtractor-Windows10-11.exe main.py
       - uses: actions/upload-artifact@v4
         with:
           name: EmailExtractor-Windows10-11
@@ -44,7 +44,7 @@ jobs:
           Invoke-WebRequest -Uri "https://www.dependencywalker.com/depends22_x64.zip" -OutFile "depends.zip"
           Expand-Archive -Path "depends.zip" -DestinationPath "$env:USERPROFILE\.nuitka\depends"
 
-      - run: python -m nuitka --standalone --onefile --windows-disable-console --enable-plugin=tk-inter --include-package=customtkinter --include-package=pypdf --include-package=openpyxl --include-package=requests --output-filename=EmailExtractor-Windows7-8.exe main.py
+      - run: python -m nuitka --standalone --onefile --windows-disable-console -y --enable-plugin=tk-inter --include-package=customtkinter --include-package=pypdf --include-package=openpyxl --include-package=requests --output-filename=EmailExtractor-Windows7-8.exe main.py
       - uses: actions/upload-artifact@v4
         with:
           name: EmailExtractor-Windows7-8
