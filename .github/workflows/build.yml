@@ -54,8 +54,79 @@ jobs:
           name: EmailExtractor-MacIntel
           path: EmailExtractor-MacIntel.app
 
+name: Build Executables
+
+on:
+  workflow_dispatch:
+    inputs:
+      platform:
+        description: 'Scegli la piattaforma da compilare'
+        required: true
+        default: 'windows10-11'
+        type: choice
+        options:
+          - windows10-11
+          - windows7-8
+          - mac-intel
+          - mac-silicon
+          - linux
+
+jobs:
+  # ============ WINDOWS 10/11 ============
+  build-windows-modern:
+    if: ${{ github.event.inputs.platform == 'windows10-11' }}
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: pip install -r requirements.txt
+      - run: pip install nuitka ordered-set zstandard
+      - run: python -m nuitka --standalone --onefile --windows-console-mode=disable --assume-yes-for-downloads --enable-plugin=tk-inter --include-package=customtkinter --include-package=pypdf --include-package=openpyxl --include-package=requests --output-filename=EmailExtractor-Windows10-11.exe main.py
+      - uses: actions/upload-artifact@v4
+        with:
+          name: EmailExtractor-Windows10-11
+          path: EmailExtractor-Windows10-11.exe
+
+  # ============ WINDOWS 7/8 (compatibilità) ============
+  build-windows-legacy:
+    if: ${{ github.event.inputs.platform == 'windows7-8' }}
+    runs-on: windows-latest   # windows-2019 non è più disponibile
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.8'
+      - run: pip install -r requirements.txt
+      - run: pip install nuitka ordered-set zstandard
+      - run: python -m nuitka --standalone --onefile --windows-console-mode=disable --assume-yes-for-downloads --enable-plugin=tk-inter --include-package=customtkinter --include-package=pypdf --include-package=openpyxl --include-package=requests --output-filename=EmailExtractor-Windows7-8.exe main.py
+      - uses: actions/upload-artifact@v4
+        with:
+          name: EmailExtractor-Windows7-8
+          path: EmailExtractor-Windows7-8.exe
+
+  # ============ MAC INTEL ============
+  build-mac-intel:
+    if: ${{ github.event.inputs.platform == 'mac-intel' }}
+    runs-on: macos-13
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      - run: pip install -r requirements.txt
+      - run: pip install nuitka ordered-set zstandard
+      - run: python -m nuitka --standalone --assume-yes-for-downloads --macos-create-app-bundle --enable-plugin=tk-inter --include-package=customtkinter --include-package=pypdf --include-package=openpyxl --include-package=requests --output-filename=EmailExtractor-MacIntel main.py
+      - run: ls -la
+      - uses: actions/upload-artifact@v4
+        with:
+          name: EmailExtractor-MacIntel
+          path: "*.app"
+
   # ============ MAC APPLE SILICON ============
   build-mac-silicon:
+    if: ${{ github.event.inputs.platform == 'mac-silicon' }}
     runs-on: macos-14
     steps:
       - uses: actions/checkout@v4
@@ -65,19 +136,21 @@ jobs:
       - run: pip install -r requirements.txt
       - run: pip install nuitka ordered-set zstandard
       - run: python -m nuitka --standalone --assume-yes-for-downloads --macos-create-app-bundle --enable-plugin=tk-inter --include-package=customtkinter --include-package=pypdf --include-package=openpyxl --include-package=requests --output-filename=EmailExtractor-MacSilicon main.py
+      - run: ls -la
       - uses: actions/upload-artifact@v4
         with:
           name: EmailExtractor-MacSilicon
-          path: EmailExtractor-MacSilicon.app
+          path: "*.app"
 
   # ============ LINUX ============
   build-linux:
-    runs-on: ubuntu-20.04
+    if: ${{ github.event.inputs.platform == 'linux' }}
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
-          python-version: '3.8'
+          python-version: '3.11'
       - run: pip install -r requirements.txt
       - run: pip install nuitka ordered-set zstandard
       - run: python -m nuitka --standalone --onefile --assume-yes-for-downloads --enable-plugin=tk-inter --include-package=customtkinter --include-package=pypdf --include-package=openpyxl --include-package=requests --output-filename=EmailExtractor-Linux main.py
