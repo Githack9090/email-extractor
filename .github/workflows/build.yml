@@ -1,62 +1,6 @@
 name: Build Executables
 
 on:
-  push:
-    branches: [ main ]
-  workflow_dispatch:
-
-jobs:
-  # ============ WINDOWS MODERNO (Windows 10/11) ============
-  build-windows-modern:
-    runs-on: windows-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
-        with:
-          python-version: '3.11'
-      - run: pip install -r requirements.txt
-      - run: pip install nuitka ordered-set zstandard
-      - run: python -m nuitka --standalone --onefile --windows-console-mode=disable --assume-yes-for-downloads --enable-plugin=tk-inter --include-package=customtkinter --include-package=pypdf --include-package=openpyxl --include-package=requests --output-filename=EmailExtractor-Windows10-11.exe main.py
-      - uses: actions/upload-artifact@v4
-        with:
-          name: EmailExtractor-Windows10-11
-          path: EmailExtractor-Windows10-11.exe
-
-  # ============ WINDOWS LEGACY (tenta compatibilità con Windows 7/8) ============
-  build-windows-legacy:
-    runs-on: windows-latest   # windows-2019 non è più disponibile
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
-        with:
-          python-version: '3.8'
-      - run: pip install -r requirements.txt
-      - run: pip install nuitka ordered-set zstandard
-      - run: python -m nuitka --standalone --onefile --windows-console-mode=disable --assume-yes-for-downloads --enable-plugin=tk-inter --include-package=customtkinter --include-package=pypdf --include-package=openpyxl --include-package=requests --output-filename=EmailExtractor-Windows7-8.exe main.py
-      - uses: actions/upload-artifact@v4
-        with:
-          name: EmailExtractor-Windows7-8
-          path: EmailExtractor-Windows7-8.exe
-
-  # ============ MAC INTEL ============
-  build-mac-intel:
-    runs-on: macos-13
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
-        with:
-          python-version: '3.9'
-      - run: pip install -r requirements.txt
-      - run: pip install nuitka ordered-set zstandard
-      - run: python -m nuitka --standalone --assume-yes-for-downloads --macos-create-app-bundle --enable-plugin=tk-inter --include-package=customtkinter --include-package=pypdf --include-package=openpyxl --include-package=requests --output-filename=EmailExtractor-MacIntel main.py
-      - uses: actions/upload-artifact@v4
-        with:
-          name: EmailExtractor-MacIntel
-          path: EmailExtractor-MacIntel.app
-
-name: Build Executables
-
-on:
   workflow_dispatch:
     inputs:
       platform:
